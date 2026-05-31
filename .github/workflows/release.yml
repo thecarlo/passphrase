@@ -44,10 +44,11 @@ jobs:
           rm passphrase_amd64 passphrase_arm64
 
       - name: Sign binary
-        env:
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          codesign --sign "Developer ID Application: $APPLE_TEAM_ID" \
+          KEYCHAIN_PATH=$RUNNER_TEMP/signing.keychain
+          SIGNING_IDENTITY=$(security find-identity -v -p codesigning $KEYCHAIN_PATH \
+            | grep "Developer ID Application" | head -1 | awk -F'"' '{print $2}')
+          codesign --sign "$SIGNING_IDENTITY" \
             --options runtime \
             --timestamp \
             --force \

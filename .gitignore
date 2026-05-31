@@ -14,3 +14,5 @@ passphrase_arm64
 
 # Go
 vendor/
+
+tmp*.*
