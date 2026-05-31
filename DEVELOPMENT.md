@@ -41,6 +41,26 @@ Force a fresh run (bypass cache):
 go test -count=1 -v ./...
 ```
 
+## Releasing a new version
+
+1. Ensure all changes are committed and pushed to `master`.
+
+2. Create a version tag:
+   ```sh
+   git tag v1.2.3
+   ```
+
+3. Push the tag to GitHub:
+   ```sh
+   git push origin v1.2.3
+   ```
+
+This triggers the [release workflow](.github/workflows/release.yml), which:
+- Runs tests
+- Builds a universal binary (amd64 + arm64 via `lipo`)
+- Packages it as `passphrase.alfredworkflow`
+- Creates a GitHub Release with auto-generated release notes and the workflow attached
+
 ## Setting up the workflow in Alfred
 
 1. Build the binary:
