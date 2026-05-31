@@ -6,7 +6,7 @@ import (
 )
 
 func TestGenerateWords(t *testing.T) {
-	for _, n := range []int{2, 3, 4, 5} {
+	for _, n := range []int{2, 3, 4, 5, 6, 7, 8, 9, 10} {
 		words, err := generateWords(n)
 		if err != nil {
 			t.Fatalf("generateWords(%d) returned error: %v", n, err)

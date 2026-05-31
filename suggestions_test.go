@@ -15,7 +15,7 @@ func containsDigit(s string) bool {
 }
 
 func TestSuggestions(t *testing.T) {
-	for _, wordCount := range []int{2, 3, 4, 5} {
+	for _, wordCount := range []int{2, 3, 4, 5, 6, 7, 8, 9, 10} {
 		result, err := suggestions(wordCount)
 		if err != nil {
 			t.Fatalf("suggestions(%d) returned error: %v", wordCount, err)

@@ -12,8 +12,8 @@ func run() {
 		if n, err := strconv.Atoi(args[0]); err == nil {
 			if n < 2 {
 				n = 2
-			} else if n > 5 {
-				n = 5
+			} else if n > 10 {
+				n = 10
 			}
 			wordCount = n
 		}
