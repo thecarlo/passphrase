@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Run tests
+        run: go test -count=1 ./...
+
+      - name: Build universal binary
+        run: |
+          GOOS=darwin GOARCH=amd64 go build -o passphrase_amd64 .
+          GOOS=darwin GOARCH=arm64 go build -o passphrase_arm64 .
+          lipo -create -output workflow/passphrase passphrase_amd64 passphrase_arm64
+          rm passphrase_amd64 passphrase_arm64
+
+      - name: Package Alfred workflow
+        run: |
+          chmod +x workflow/passphrase
+          cd workflow
+          zip -r ../passphrase.alfredworkflow .
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: passphrase.alfredworkflow
+          generate_release_notes: true

@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+
+# Claude Code
+.claude/
+
+# binary
+passphrase
+passphrase_amd64
+passphrase_arm64
+
+# build output
+*.alfredworkflow
+
+# Go
+vendor/
