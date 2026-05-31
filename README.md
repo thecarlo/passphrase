@@ -4,6 +4,8 @@ Alfred workflow that generates passphrases using [EFF Dice-Generated Passphrases
 
 Diceware passphrases are strong because their security comes from the sheer size of the wordlist — with 7,776 possible words per position, even a 3-word passphrase represents an enormous number of combinations for an attacker to brute-force. Unlike random strings of characters, they're made up of real words, making them far easier to remember and type without sacrificing security. Adding a number at a random position increases entropy further while keeping the passphrase readable.
 
+The full EFF wordlist is compiled into the binary at build time as a pre-built word slice, so there is no file I/O or parsing on every invocation.
+
 ![Alfred passphrase workflow](docs/images/alfred.png)
 
 ## Installation
