@@ -15,11 +15,17 @@ passphrase/
 ├── capitalize.go                        # uppercases the first character
 └── internal/
     └── diceware/
-        ├── wordlist.go                  # embeds wordlist, exposes RandomWords(n)
-        └── eff_large_wordlist.txt       # EFF large wordlist (7,776 words), embedded at compile time
+        ├── wordlist.go                  # exposes RandomWords(n); declares //go:generate
+        ├── words_gen.go                 # generated []string of all 7,776 words — DO NOT EDIT
+        ├── eff_large_wordlist.txt       # EFF large wordlist source (dice number + word per line)
+        └── cmd/
+            └── gen/
+                └── main.go             # generator: reads eff_large_wordlist.txt, writes words_gen.go
 ```
 
 `main` package files live at the root since this is a single binary with no exportable packages. Reusable logic is isolated in `internal/diceware/`.
+
+The word slice (`words_gen.go`) is generated at development time via `go generate` and committed to the repo. At startup the Go runtime loads the pre-built slice directly — no file scanning or string splitting on every invocation.
 
 ## Running tests
 
@@ -40,6 +46,16 @@ Force a fresh run (bypass cache):
 ```sh
 go test -count=1 -v ./...
 ```
+
+## Regenerating the wordlist
+
+`words_gen.go` is committed to the repo and does not need to be regenerated on every build. Only regenerate it when `eff_large_wordlist.txt` changes:
+
+```sh
+go generate ./internal/diceware/...
+```
+
+This runs `internal/diceware/cmd/gen/main.go`, which reads `eff_large_wordlist.txt` and overwrites `words_gen.go`. Commit the updated file alongside any changes to the source wordlist.
 
 ## Releasing a new version
 
