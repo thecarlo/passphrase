@@ -62,8 +62,6 @@ This triggers the [release workflow](.github/workflows/release.yml), which:
 - Packages it as `passphrase.alfredworkflow`
 - Creates a GitHub Release with auto-generated release notes and the workflow attached
 
-For first-time setup of the signing credentials, see [docs/apple-signing.md](docs/apple-signing.md).
-
 ## Setting up the workflow in Alfred
 
 1. Build the binary:
