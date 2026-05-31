@@ -45,9 +45,9 @@ Passphrases use 3 words by default. To change this, set `WORD_COUNT` as a workfl
 
 | Variable     | Example value |
 | ------------ | ------------- |
-| `WORD_COUNT` | 2             |
+| `WORD_COUNT` | 5             |
 
-Setting `WORD_COUNT=2` means `pw` will always generate 2-word passphrases. An inline argument (e.g. `pw 4`) always takes priority over `WORD_COUNT`.
+Setting `WORD_COUNT=5` means `pw` will always generate 5-word passphrases. An inline argument (e.g. `pw 4`) always takes priority over `WORD_COUNT`.
 
 ---
 
