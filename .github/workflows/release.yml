@@ -21,12 +21,54 @@ jobs:
       - name: Run tests
         run: go test -count=1 ./...
 
+      - name: Import signing certificate
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        run: |
+          KEYCHAIN_PATH=$RUNNER_TEMP/signing.keychain
+          security create-keychain -p "" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "" $KEYCHAIN_PATH
+          echo "$APPLE_CERTIFICATE" | base64 --decode > $RUNNER_TEMP/cert.p12
+          security import $RUNNER_TEMP/cert.p12 -k $KEYCHAIN_PATH \
+            -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security list-keychain -d user -s $KEYCHAIN_PATH
+          security set-key-partition-list -S apple-tool:,apple: -k "" $KEYCHAIN_PATH
+
       - name: Build universal binary
         run: |
           GOOS=darwin GOARCH=amd64 go build -o passphrase_amd64 .
           GOOS=darwin GOARCH=arm64 go build -o passphrase_arm64 .
           lipo -create -output workflow/passphrase passphrase_amd64 passphrase_arm64
           rm passphrase_amd64 passphrase_arm64
+
+      - name: Sign binary
+        run: |
+          KEYCHAIN_PATH=$RUNNER_TEMP/signing.keychain
+          SIGNING_IDENTITY=$(security find-identity -v -p codesigning $KEYCHAIN_PATH \
+            | grep "Developer ID Application" | head -1 | awk -F'"' '{print $2}')
+          codesign --sign "$SIGNING_IDENTITY" \
+            --options runtime \
+            --timestamp \
+            --force \
+            workflow/passphrase
+
+      - name: Notarize binary
+        env:
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_KEY_ISSUER_ID: ${{ secrets.APPLE_API_KEY_ISSUER_ID }}
+          APPLE_API_PRIVATE_KEY: ${{ secrets.APPLE_API_PRIVATE_KEY }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          echo "$APPLE_API_PRIVATE_KEY" | base64 --decode > $RUNNER_TEMP/api_key.p8
+          zip -j $RUNNER_TEMP/passphrase_notarize.zip workflow/passphrase
+          xcrun notarytool submit $RUNNER_TEMP/passphrase_notarize.zip \
+            --key $RUNNER_TEMP/api_key.p8 \
+            --key-id "$APPLE_API_KEY_ID" \
+            --issuer "$APPLE_API_KEY_ISSUER_ID" \
+            --team-id "$APPLE_TEAM_ID" \
+            --wait
 
       - name: Package Alfred workflow
         run: |
