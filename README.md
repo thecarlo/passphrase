@@ -32,12 +32,12 @@ Rocket-9Ladder-Crane
 Pass a number after `pw` to set how many words to use:
 
 ```
-pw 2  →  2-word passphrases
-pw 4  →  4-word passphrases
-pw 5  →  5-word passphrases
+pw 2   →  2-word passphrases
+pw 4   →  4-word passphrases
+pw 10  →  10-word passphrases
 ```
 
-Valid range is **2–5**. Values outside this range are clamped to the nearest bound.
+Valid range is **2–10**. Values outside this range are clamped to the nearest bound.
 
 ## Configuration
 
@@ -45,9 +45,9 @@ Passphrases use 3 words by default. To change this, set `WORD_COUNT` as a workfl
 
 | Variable     | Example value |
 | ------------ | ------------- |
-| `WORD_COUNT` | 2             |
+| `WORD_COUNT` | 5             |
 
-Setting `WORD_COUNT=2` means `pw` will always generate 2-word passphrases. An inline argument (e.g. `pw 4`) always takes priority over `WORD_COUNT`.
+Setting `WORD_COUNT=5` means `pw` will always generate 5-word passphrases. An inline argument (e.g. `pw 4`) always takes priority over `WORD_COUNT`.
 
 ---
 
