@@ -58,8 +58,11 @@ go test -count=1 -v ./...
 This triggers the [release workflow](.github/workflows/release.yml), which:
 - Runs tests
 - Builds a universal binary (amd64 + arm64 via `lipo`)
+- Signs and notarizes the binary using your Apple Developer credentials
 - Packages it as `passphrase.alfredworkflow`
 - Creates a GitHub Release with auto-generated release notes and the workflow attached
+
+For first-time setup of the signing credentials, see [docs/apple-signing.md](docs/apple-signing.md).
 
 ## Setting up the workflow in Alfred
 
